@@ -1,10 +1,12 @@
 package mesosphere.marathon.example.plugin.auth
 
 import java.util.Base64
+import org.mindrot.jbcrypt.BCrypt
 
 import mesosphere.marathon.plugin.auth.{ Authenticator, Identity }
 import mesosphere.marathon.plugin.http.{ HttpRequest, HttpResponse }
 import mesosphere.marathon.plugin.plugin.PluginConfiguration
+
 import play.api.libs.json.JsObject
 
 import scala.concurrent.Future
@@ -36,7 +38,7 @@ class ExampleAuthenticator extends Authenticator with PluginConfiguration {
     for {
       auth <- request.header("Authorization").headOption
       (username, password) <- basicAuth(auth)
-      identity <- identities.get(username) if identity.password == password
+      identity <- identities.get(username) if BCrypt.checkpw(password, identity.password)
     } yield identity
 
   }

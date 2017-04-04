@@ -15,9 +15,9 @@ object Permission {
 
   private def actionByName(name: String): Seq[AuthorizedAction[_]] = name match {
     case "create" => Seq(CreateRunSpec, CreateGroup)
-    case "update" => Seq(UpdateRunSpec, UpdateGroup)
+    case "update" => Seq(UpdateRunSpec, UpdateGroup, UpdateResource)
     case "delete" => Seq(DeleteRunSpec, DeleteGroup)
-    case "view" => Seq(ViewRunSpec, ViewGroup)
+    case "view" => Seq(ViewRunSpec, ViewGroup, ViewResource)
   }
 
   implicit lazy val permissionReads: Reads[PathPermission] = (
@@ -33,6 +33,7 @@ case class PathPermission(allowed: Seq[AuthorizedAction[_]], on: String) extends
   override def isAllowed[R](resource: R): Boolean = resource match {
     case app: RunSpec => app.id.toString.startsWith(on)
     case group: Group => group.id.toString.startsWith(on)
+    case authrez: AuthorizedResource => on.equals("System")
     case _ => false
   }
   override def toString: String = s"Permission(allow: $allowed, on: $on)"
