@@ -29,8 +29,12 @@ class ExampleAuthenticator extends Authenticator with PluginConfiguration {
       header match {
         case BasicAuthRegex(encoded) =>
           val decoded = new String(Base64.getDecoder.decode(encoded))
-          val UserPassRegex(username, password) = decoded
-          Some(username->password)
+          try {
+            val UserPassRegex(username, password) = decoded
+            Some(username->password)
+          } catch {
+            case _: MatchError => None
+          }
         case _ => None
       }
     }
