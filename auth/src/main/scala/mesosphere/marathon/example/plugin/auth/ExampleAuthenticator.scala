@@ -6,8 +6,10 @@ import org.mindrot.jbcrypt.BCrypt
 import mesosphere.marathon.plugin.auth.{ Authenticator, Identity }
 import mesosphere.marathon.plugin.http.{ HttpRequest, HttpResponse }
 import mesosphere.marathon.plugin.plugin.PluginConfiguration
+import play.api.libs.json.{ JsObject, Json }
+import java.io.File
 
-import play.api.libs.json.JsObject
+import org.apache.commons.io.FileUtils
 
 import scala.concurrent.Future
 
@@ -39,6 +41,8 @@ class ExampleAuthenticator extends Authenticator with PluginConfiguration {
       }
     }
 
+    loadIdentities()
+
     for {
       auth <- request.header("Authorization").headOption
       (username, password) <- basicAuth(auth)
@@ -48,9 +52,22 @@ class ExampleAuthenticator extends Authenticator with PluginConfiguration {
   }
 
   private var identities = Map.empty[String, ExampleIdentity]
+  private var identitiesFileLocation = ""
+  private var refreshIdentitiesSeconds = 60
+  private var lastUpdateSeconds = 0L
+
+  def loadIdentities() {
+    val currentSecond: Long = System.currentTimeMillis / 1000
+    if(currentSecond - lastUpdateSeconds > refreshIdentitiesSeconds) {
+      val creds = Json.parse(FileUtils.readFileToByteArray(new File(identitiesFileLocation).getCanonicalFile)).as[JsObject]
+      identities = (creds \ "users").as[Seq[ExampleIdentity]].map(id => id.username -> id).toMap
+      lastUpdateSeconds = currentSecond
+    }
+
+  }
 
   override def initialize(marathonInfo: Map[String, Any], configuration: JsObject): Unit = {
-    //read all identities from the configuration
-    identities = (configuration \ "users").as[Seq[ExampleIdentity]].map(id => id.username -> id).toMap
+    identitiesFileLocation =  (configuration \ "identitiesFileLocation").as[String]
+    refreshIdentitiesSeconds = (configuration \ "refreshIdentitiesSeconds").as[Int]
   }
 }
