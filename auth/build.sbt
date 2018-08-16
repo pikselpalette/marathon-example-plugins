@@ -1,7 +1,7 @@
 name := "auth-plugin"
 
 scalaVersion := "2.11.7"
-version := "1.0"
+version := "1.1"
 
 resolvers += "Mesosphere Public Repo" at "http://downloads.mesosphere.io/maven"
 
