@@ -1,0 +1,14 @@
+{
+    "users": [
+        {
+            "user": "admin",
+            "password": "$2a$12$uXCN.cqgx/aPXvMWkuFCaeneiz84uEWAjQPCjNczM5zCTh5HWkjEG",
+            "permissions": [
+                { "allowed": "create", "on": "/" },
+                { "allowed": "update", "on": "/" },
+                { "allowed": "delete", "on": "/" },
+                { "allowed": "view", "on": "/" }
+            ]
+        }
+    ]
+}

@@ -8,38 +8,8 @@
       "plugin": "mesosphere.marathon.plugin.auth.Authenticator",
       "implementation": "mesosphere.marathon.example.plugin.auth.ExampleAuthenticator",
       "configuration": {
-        "users": [
-          {
-            "user": "ernie",
-            "password": "ernie",
-            "permissions": [
-              { "allowed": "create", "on": "/dev/" },
-              { "allowed": "update", "on": "/dev/" },
-              { "allowed": "delete", "on": "/dev/" },
-              { "allowed": "view", "on": "/dev/" }
-            ]
-          },
-          {
-            "user": "bert",
-            "password": "bert",
-            "permissions": [
-              { "allowed": "create", "on": "/prod/" },
-              { "allowed": "update", "on": "/prod/" },
-              { "allowed": "delete", "on": "/prod/" },
-              { "allowed": "view", "on": "/prod/" }
-            ]
-          },
-          {
-            "user": "admin",
-            "password": "admin",
-            "permissions": [
-              { "allowed": "create", "on": "/" },
-              { "allowed": "update", "on": "/" },
-              { "allowed": "delete", "on": "/" },
-              { "allowed": "view", "on": "/" }
-            ]
-          }
-        ]
+        "identitiesFileLocation" : "/path/to/identities.json",
+        "refreshIdentitiesSeconds" : 5
       }
     }
   }
